@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Studio Reservation</title>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LeucygsAAAAAEnA0gXp5opn6fsHpiEC7EZR6Vnr"></script>
+    <link rel="stylesheet" href="./styles/stylesheet.css" />
+  </head>
+  <body>
+    <form id="reservationForm">
+      <input
+        type="email"
+        name="email"
+        placeholder="voorbeeld@gmail.com"
+        required
+      />
+      <input
+        type="text"
+        name="name"
+        placeholder="Voor- en achternaam"
+        required
+      />
+
+      <select id="studio" required>
+        <option value="">Kies je studio</option>
+        <option value="Oefen ruimte">Oefen ruimte</option>
+        <option value="Opneem studio">Opneem studio</option>
+        <option value="Atelier">Atelier</option>
+        <option value="Danszaal">Danszaal</option>
+      </select>
+
+      <input type="date" id="date" required />
+
+      <div>
+        <label for="startTime">Start tijd</label>
+        <select id="startTime" required></select>
+      </div>
+
+      <div>
+        <label for="endTime">eind tijd</label>
+        <select id="endTime" required></select>
+      </div>
+
+      <button type="submit">Reserveer</button>
+    </form>
+
+    <script type="module" src="./scripts/reservation.js"></script>
+  </body>
+</html>

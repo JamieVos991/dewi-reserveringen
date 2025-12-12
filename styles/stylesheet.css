@@ -1,0 +1,75 @@
+:root {
+  --primaire-kleur: hsl(0, 0%, 0%);
+  --secundaire-kleur: #7912d3;
+  --tertiaire-kleur: hsl(37, 83%, 47%);
+  --tekst-kleur: hsl(0, 0%, 100%);
+
+  --font-paragraaf-size: 1rem;
+  --font-heading-size-xs: 1.2rem;
+  --font-heading-size-s: 1.4rem;
+  --font-heading-size-m: 1.6rem;
+  --font-heading-size-l: 1.8rem;
+  --font-heading-size-xl: 2rem;
+  --font-heading-size-xxl: 2.2rem;
+
+  --lijn-hoogte-paragraaf: 1.4;
+  --lijn-hoogte-heading: 1.2;
+}
+
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+p {
+  line-height: var(--lijn-hoogte-paragraaf);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: var(--lijn-hoogte-heading);
+}
+
+.font-paragraaf-size {
+  font-size: var(--font-paragraaf-size);
+}
+
+.font-heading-size-xs {
+  font-size: var(--font-heading-size-xs);
+}
+
+.font-heading-size-s {
+  font-size: var(--font-heading-size-s);
+}
+
+.font-heading-size-m {
+  font-size: var(--font-heading-size-m);
+}
+
+.font-heading-size-l {
+  font-size: var(--font-heading-size-l);
+}
+
+.font-heading-size-xl {
+  font-size: var(--font-heading-size-xl);
+}
+
+.font-heading-size-xxl {
+  font-size: var(--font-heading-size-xxl);
+}
+
+.geen-bullets {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
