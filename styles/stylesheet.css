@@ -16,6 +16,7 @@
   --lijn-hoogte-heading: 1.2;
 }
 
+*,
 *::before,
 *::after {
   margin: 0;
@@ -72,4 +73,15 @@ h6 {
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border: 1.5px solid var(--secundaire-kleur);
+}
+
+form div:has(input:disabled),
+form div:has(select:disabled) {
+  opacity: 0.7;
 }

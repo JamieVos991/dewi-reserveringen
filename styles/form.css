@@ -1,0 +1,131 @@
+body {
+  background: var(--primaire-kleur);
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  color: black;
+  padding: 1rem;
+}
+
+section {
+  background: var(--tekst-kleur);
+  max-width: 50rem;
+  min-height: 30rem;
+  padding: 2rem;
+  display: grid;
+  grid-template-areas:
+    "title title title"
+    "sidebar inputs inputs";
+
+  @media (max-width: 700px) {
+    grid-template-areas:
+      "title"
+      "sidebar"
+      "inputs";
+  }
+
+  header {
+    grid-area: title;
+    margin-top: 1rem;
+  }
+
+  aside article.active {
+    background-color: var(--secundaire-kleur);
+    transition: 0.4s;
+  }
+
+  aside {
+    grid-area: sidebar;
+    display: flex;
+    flex-direction: column;
+    padding-top: 2rem;
+    position: relative;
+    min-width: 5rem;
+    gap: 2rem;
+
+    @media (max-width: 700px) {
+      flex-direction: row;
+      align-items: center;
+      padding: 0;
+      margin: 2rem 0px;
+    }
+
+    &::after {
+      content: "";
+      display: block;
+      height: 100%;
+      left: 15px;
+      width: 0.05rem;
+      background-color: var(--secundaire-kleur);
+      position: absolute;
+
+      @media (max-width: 700px) {
+        width: 100%;
+        height: 0.06rem;
+      }
+    }
+
+    article {
+      width: 2rem;
+      position: relative;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background-color: white;
+      z-index: 1;
+      aspect-ratio: 1/1;
+      border: 0.1rem solid var(--secundaire-kleur);
+
+      &:after {
+        content: "";
+        bottom: 1.5px;
+        position: absolute;
+
+        width: 1.5rem;
+        height: 1.5rem;
+        background-color: white;
+        -webkit-mask: url("../assets/check.svg") no-repeat center / contain;
+        mask: url("../assets/check.svg") no-repeat center / contain;
+      }
+    }
+  }
+
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    grid-area: inputs;
+    gap: 1.5rem;
+
+    @media (max-width: 700px) {
+      flex-direction: column;
+    }
+
+    div {
+      display: inline-flex;
+      flex-direction: column;
+      width: 45%;
+      gap: 0.3rem;
+
+      @media (max-width: 700px) {
+        width: 100%;
+      }
+
+      input,
+      select {
+        height: 2.5rem;
+        padding: 0 0.4rem;
+      }
+
+      select {
+        -moz-appearance: none; /* Firefox */
+        -webkit-appearance: none; /* Safari and Chrome */
+        appearance: none;
+
+        &::after {
+          content: "a";
+          display: block;
+        }
+      }
+    }
+  }
+}
