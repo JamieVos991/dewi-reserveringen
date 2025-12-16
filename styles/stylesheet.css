@@ -93,6 +93,7 @@ button[type="submit"] {
   background-color: var(--secundaire-kleur);
   border: none;
   padding: 0.5rem 2rem;
+  max-width: max-content;
   color: white;
   border-radius: 2rem;
   font-family: var(--font-gill-sans);
