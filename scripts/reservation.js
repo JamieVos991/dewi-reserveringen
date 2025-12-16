@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const MIN_HOUR = 8;
   const MIN_MINUTE = 30;
   const MAX_HOUR = 21;
+  const MAX_MINUTE = 30; 
   const STEP_MINUTES = 30;
 
   let studio = "";
@@ -26,21 +27,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const endSelect = document.getElementById("endTime");
   const form = document.getElementById("reservationForm");
 
-  /* -------------------- DATE SETUP -------------------- */
-
   const today = new Date();
   const todayStr = today.toISOString().split("T")[0];
   dateInput.min = todayStr;
   dateInput.value = todayStr;
   date = todayStr;
 
-  /* -------------------- HELPERS -------------------- */
-
   function generateTimes() {
     const times = [];
+
     for (let h = MIN_HOUR; h <= MAX_HOUR; h++) {
       for (let m = 0; m < 60; m += STEP_MINUTES) {
         if (h === MIN_HOUR && m < MIN_MINUTE) continue;
+        if (h === MAX_HOUR && m > MAX_MINUTE) continue;
+
         times.push({
           hour: h,
           minute: m,
@@ -48,14 +48,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
     return times;
   }
 
   function rangesOverlap(startA, endA, startB, endB) {
     return startA < endB && endA > startB;
   }
-
-  /* -------------------- FIRESTORE -------------------- */
 
   async function fetchBookedTimes() {
     if (!studio || !date) return;
@@ -79,20 +78,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* -------------------- UI POPULATION -------------------- */
-
   function populateStartTimes() {
     const allTimes = generateTimes();
     startSelect.innerHTML = `<option value="">Selecteer een start tijd</option>`;
-
+  
     const now = new Date();
     const selectedDate = new Date(date + "T00:00");
-
-    allTimes.forEach(t => {
+  
+    allTimes.forEach((t, index) => {
+      if (index === allTimes.length - 1) return;
+  
       let disabled = false;
       let text = t.str;
-
-      // Disable past times (today only)
+  
       if (
         now.toDateString() === selectedDate.toDateString() &&
         (t.hour < now.getHours() ||
@@ -100,15 +98,14 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
         disabled = true;
       }
-
-      // Disable booked ranges
+  
       bookedRanges.forEach(range => {
         if (t.str >= range.startTime && t.str < range.endTime) {
           disabled = true;
           text += " – Geboekt";
         }
       });
-
+  
       const option = document.createElement("option");
       option.value = t.str;
       option.textContent = text;
@@ -116,33 +113,31 @@ document.addEventListener("DOMContentLoaded", () => {
       startSelect.appendChild(option);
     });
   }
-
+  
   function populateEndTimes() {
     if (!startTime) return;
-  
+
     const allTimes = generateTimes();
     const startIndex = allTimes.findIndex(t => t.str === startTime) + 1;
-  
+
     endSelect.innerHTML = `<option value="">Selecteer een eind tijd</option>`;
-  
-    // Find the first booking that starts AFTER the selected start
+
     const nextBooking = bookedRanges
       .filter(range => range.startTime > startTime)
       .sort((a, b) => a.startTime.localeCompare(b.startTime))[0];
-  
+
     const maxEndTime = nextBooking ? nextBooking.startTime : null;
-  
+
     allTimes.slice(startIndex).forEach(t => {
-      // Stop when we reach the next booking
       if (maxEndTime && t.str > maxEndTime) return;
-  
+
       const option = document.createElement("option");
       option.value = t.str;
       option.textContent = t.str;
       endSelect.appendChild(option);
     });
   }
-  
+
   async function refreshTimes() {
     await fetchBookedTimes();
     populateStartTimes();
@@ -151,7 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
     endSelect.innerHTML = "";
   }
 
-  /* -------------------- EVENTS -------------------- */
 
   studioSelect.addEventListener("change", () => {
     studio = studioSelect.value;
@@ -173,7 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
     endTime = e.target.value;
   });
 
-  /* -------------------- SUBMIT (SAFE) -------------------- */
 
   form.addEventListener("submit", async e => {
     e.preventDefault();
@@ -183,7 +176,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // 🔒 ALWAYS re-check before saving
     await fetchBookedTimes();
 
     const conflict = bookedRanges.some(range =>

@@ -5,6 +5,10 @@ body {
   min-height: 100dvh;
   color: black;
   padding: 1rem;
+
+  @media (max-width: 700px) {
+    padding: 1rem 1.5rem;
+  }
 }
 
 section {

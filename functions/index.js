@@ -1,56 +1,33 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const fetch = require("node-fetch");
+const nodemailer = require("nodemailer");
 
 // Firebase initialiseren
 admin.initializeApp();
 const db = admin.firestore();
 
+// Configureer mailer (Gmail example)
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "Jamievos100@gmail.com",        // je Gmail
+    pass: "zvyt xryg bpgi rcdr"           // Gmail App Password
+  }
+});
+
 // Reserveer functie
 exports.reserve = functions.https.onRequest(async (req, res) => {
   if (req.method !== "POST") {
-    return res.status(405).send({
-      success: false,
-      message: "Method Not Allowed",
-    });
+    return res.status(405).send({ success: false, message: "Method Not Allowed" });
   }
 
-  const recaptchaToken = req.body.recaptchaToken;
-  const email = req.body.email;
-  const name = req.body.name;
-  const studio = req.body.studio;
-  const date = req.body.date;
-  const startTime = req.body.startTime;
-  const endTime = req.body.endTime;
+  const { email, name, studio, date, startTime, endTime } = req.body;
 
-  if (!recaptchaToken) {
-    return res.status(400).send({
-      success: false,
-      message: "No reCAPTCHA token provided",
-    });
+  if (!email || !name || !studio || !date || !startTime || !endTime) {
+    return res.status(400).send({ success: false, message: "Missing required fields" });
   }
 
   try {
-    // reCAPTCHA verifiëren
-    const googleRes = await fetch(
-      "https://www.google.com/recaptcha/api/siteverify" +
-        "?secret=6LeucygsAAAAAC5G97lilkpwB_6_jA_-b0dGpqHc" +
-        `&response=${recaptchaToken}`,
-      { method: "POST" }
-    );
-
-    const data = await googleRes.json();
-
-    console.log("Token:", recaptchaToken);
-    console.log("Verification response:", data);
-
-    if (!data.success || data.score < 0.5) {
-      return res.status(400).send({
-        success: false,
-        message: "reCAPTCHA verification failed",
-      });
-    }
-
     // Opslaan in Firestore
     await db.collection("reservations").add({
       email,
@@ -62,12 +39,32 @@ exports.reserve = functions.https.onRequest(async (req, res) => {
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
+    // Verstuur bevestigingsmail naar gebruiker
+    try {
+      const info = await transporter.sendMail({
+        from: `"Studio Reservations" <Jamievos100@gmail.com>`,
+        to: email,
+        subject: "Your reservation is confirmed ✅",
+        html: `
+          <h2>Reservation confirmed</h2>
+          <p>Hi ${name},</p>
+          <p>Your reservation has been confirmed:</p>
+          <ul>
+            <li><strong>Studio:</strong> ${studio}</li>
+            <li><strong>Date:</strong> ${date}</li>
+            <li><strong>Time:</strong> ${startTime} – ${endTime}</li>
+          </ul>
+          <p>See you soon!</p>
+        `
+      });
+      console.log("Mail sent:", info.messageId);
+    } catch(mailErr) {
+      console.error("Mail error:", mailErr);
+    }
+
     return res.send({ success: true });
   } catch (err) {
     console.error(err);
-    return res.status(500).send({
-      success: false,
-      message: "Server error",
-    });
+    return res.status(500).send({ success: false, message: "Server error" });
   }
 });
