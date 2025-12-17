@@ -2,7 +2,7 @@ section {
   background: var(--tekst-kleur);
   border-radius: var(--border-radius);
 
-  max-width: 50rem;
+  max-width: 55rem;
   min-height: 30rem;
   padding: 2rem;
 
@@ -38,27 +38,32 @@ section {
     article.actief {
       background-color: var(--secundaire-kleur);
       transition: 0.4s;
+      border: 0.1rem solid var(--tekst-kleur);
     }
 
     @media (max-width: 700px) {
       flex-direction: row;
       align-items: center;
       padding: 0;
-      margin: 2rem 15px 2rem 0px;
+      margin: 2rem 0 2rem 0px;
     }
 
     &::after {
       content: "";
       display: block;
       height: 100%;
-      left: 15px;
-      width: 0.05rem;
+      border-top-right-radius: 1rem;
+      border-top-left-radius: 1rem;
+      transform: translateX(70%);
+      width: 0.8rem;
       background-color: var(--secundaire-kleur);
       position: absolute;
 
       @media (max-width: 700px) {
         width: 100%;
-        height: 0.06rem;
+        height: 0.8rem;
+        transform: translateX(0%);
+        border-radius: inherit;
       }
     }
 
@@ -67,7 +72,7 @@ section {
       position: relative;
       display: grid;
       place-items: center;
-      border-radius: 50%;
+      border-radius: var(--border-radius);
       background-color: var(--tekst-kleur);
       z-index: 1;
       aspect-ratio: 1/1;
@@ -91,37 +96,49 @@ section {
     display: flex;
     flex-wrap: wrap;
     grid-area: inputs;
+    padding-top: 1.5rem;
     gap: 1.5rem;
 
     @media (max-width: 700px) {
       flex-direction: column;
+      padding: 0;
     }
 
-    div {
-      display: inline-flex;
-      flex-direction: column;
-      width: 45%;
-      gap: 0.3rem;
+    fieldset {
+      width: 100%;
+      padding: 1rem;
+      display: flex;
+      border-radius: var(--border-radius);
+      gap: 1rem;
 
       @media (max-width: 700px) {
-        width: 100%;
+        flex-direction: column;
       }
+    }
 
-      input,
-      select {
-        height: 2.5rem;
-        padding: 0 0.4rem;
-      }
+    label {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      width: 100%;
+    }
 
-      select {
-        -moz-appearance: none; /* Firefox */
-        -webkit-appearance: none; /* Safari and Chrome */
-        appearance: none;
+    input,
+    select {
+      height: 2.5rem;
+      border-radius: var(--border-radius);
+      border: 1px solid var(--primaire-kleur);
+      padding: 0 0.4rem;
+    }
 
-        &::after {
-          content: "";
-          display: block;
-        }
+    select {
+      -moz-appearance: none; /* Firefox */
+      -webkit-appearance: none; /* Safari and Chrome */
+      appearance: none;
+
+      &::after {
+        content: "";
+        display: block;
       }
     }
   }

@@ -24,54 +24,63 @@
         <article></article>
       </aside>
       <form id="reservationForm">
-        <div>
-          <label for="">Naam</label>
-          <input
-            type="text"
-            id="naam"
-            name="name"
-            placeholder="Voor- en achternaam"
-            required
-          />
-        </div>
-        <div>
-          <label for="">Email</label>
-          <input
-            type="email"
-            id="mail"
-            name="email"
-            placeholder="Voorbeeld@gmail.com"
-            required
-          />
-        </div>
-        <div>
-          <label for="">Kies een studio</label>
-          <select id="studio" required>
-            <option value="" disabled selected>Studio's</option>
-            <option value="Oefen ruimte">Oefen ruimte</option>
-            <option value="Opneem studio">Opneem studio</option>
-            <option value="Atelier">Atelier</option>
-            <option value="Danszaal">Danszaal</option>
-          </select>
-        </div>
-        <div>
-          <label for="">Datum</label>
-          <input
-            type="date"
-            id="date"
-            data-placeholder="Kies een datum"
-            onclick="this.showPicker()"
-            required
-          />
-        </div>
-        <div>
-          <label for="startTime">Start tijd</label>
-          <select id="startTime" required></select>
-        </div>
-        <div>
-          <label for="endTime">Eind tijd</label>
-          <select id="endTime" required></select>
-        </div>
+        <fieldset>
+          <legend>Info</legend>
+          <label
+            >Naam
+            <input
+              type="text"
+              id="naam"
+              name="name"
+              placeholder="Voor- en achternaam"
+              required
+            />
+          </label>
+          <label
+            >Email
+            <input
+              type="email"
+              id="mail"
+              name="email"
+              placeholder="Voorbeeld@gmail.com"
+              required
+            />
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>Planning</legend>
+          <label
+            >Kies een studio
+            <select id="studio" required>
+              <option value="" disabled selected>Studio's</option>
+              <option value="Oefen ruimte">Oefen ruimte</option>
+              <option value="Opneem studio">Opneem studio</option>
+              <option value="Atelier">Atelier</option>
+              <option value="Danszaal">Danszaal</option>
+            </select>
+          </label>
+          <label
+            >Datum
+            <input
+              type="date"
+              id="date"
+              data-placeholder="Kies een datum"
+              onclick="this.showPicker()"
+              required
+            />
+          </label>
+        </fieldset>
+        <fieldset>
+          <legend>Tijd</legend>
+          <label for="startTime"
+            >Start tijd
+            <select id="startTime" required></select>
+          </label>
+          <label for="endTime"
+            >Eind tijd
+            <select id="endTime" required></select>
+          </label>
+        </fieldset>
         <button type="submit">Reserveer</button>
       </form>
     </section>
