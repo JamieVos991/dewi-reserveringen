@@ -28,24 +28,22 @@ document.addEventListener("DOMContentLoaded", () => {
 // Laadt alle reserveringen uit Firestore
 async function loadReservations() {
   try {
-    // Query: alle reserveringen gesorteerd op datum
     const q = query(
       collection(db, "reservations"),
       orderBy("date", "asc")
     );
 
     const snapshot = await getDocs(q);
+    const container = document.getElementById("reservationsContainer");
 
-    // Pagina leegmaken
-    document.body.innerHTML = "";
+    // Alleen de container leegmaken
+    container.innerHTML = "";
 
-    // Geen data
     if (snapshot.empty) {
-      document.body.insertAdjacentHTML("beforeend", "<p>geen info.</p>");
+      container.innerHTML = "<p>Geen info.</p>";
       return;
     }
 
-    // Tabel opbouwen
     const table = document.createElement("table");
     table.innerHTML = `
       <thead>
@@ -64,7 +62,6 @@ async function loadReservations() {
 
     const tbody = table.querySelector("tbody");
 
-    // Rijen vullen met Firestore data
     snapshot.forEach((docSnap) => {
       const data = docSnap.data();
 
@@ -86,9 +83,8 @@ async function loadReservations() {
       tbody.appendChild(row);
     });
 
-    document.body.appendChild(table);
+    container.appendChild(table);
 
-    // Delete reservering
     document.querySelectorAll(".deleteBtn").forEach((btn) => {
       btn.addEventListener("click", async (e) => {
         const id = e.target.dataset.id;
@@ -101,10 +97,7 @@ async function loadReservations() {
     });
 
   } catch (error) {
-    console.error("Error met de reserveringen laden:", error);
-    document.body.insertAdjacentHTML(
-      "beforeend",
-      "<p>Fout bij het laden van de reserveringen.</p>"
-    );
+    console.error("Error met reserveringen laden:", error);
   }
 }
+
