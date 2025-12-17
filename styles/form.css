@@ -3,19 +3,17 @@ body {
   display: grid;
   place-items: center;
   min-height: 100dvh;
-  color: black;
   padding: 1rem;
-
-  @media (max-width: 700px) {
-    padding: 1rem 1.5rem;
-  }
 }
 
 section {
   background: var(--tekst-kleur);
+  border-radius: var(--border-radius);
+
   max-width: 50rem;
   min-height: 30rem;
   padding: 2rem;
+
   display: grid;
   grid-template-areas:
     "title title title"
@@ -30,12 +28,10 @@ section {
 
   header {
     grid-area: title;
-    margin-top: 1rem;
-  }
-
-  aside article.active {
-    background-color: var(--secundaire-kleur);
-    transition: 0.4s;
+    margin-top: 0.6rem;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.3rem;
   }
 
   aside {
@@ -46,6 +42,11 @@ section {
     position: relative;
     min-width: 5rem;
     gap: 2rem;
+
+    article.actief {
+      background-color: var(--secundaire-kleur);
+      transition: 0.4s;
+    }
 
     @media (max-width: 700px) {
       flex-direction: row;
@@ -75,7 +76,7 @@ section {
       display: grid;
       place-items: center;
       border-radius: 50%;
-      background-color: white;
+      background-color: var(--tekst-kleur);
       z-index: 1;
       aspect-ratio: 1/1;
       border: 0.1rem solid var(--secundaire-kleur);
@@ -87,7 +88,7 @@ section {
 
         width: 1.5rem;
         height: 1.5rem;
-        background-color: white;
+        background-color: var(--tekst-kleur);
         -webkit-mask: url("../assets/check.svg") no-repeat center / contain;
         mask: url("../assets/check.svg") no-repeat center / contain;
       }
@@ -126,7 +127,7 @@ section {
         appearance: none;
 
         &::after {
-          content: "a";
+          content: "";
           display: block;
         }
       }

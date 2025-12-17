@@ -14,6 +14,7 @@
 
   --lijn-hoogte-paragraaf: 1.4;
   --lijn-hoogte-heading: 1.2;
+  --border-radius: 0.2rem;
 
   --font-gill-sans: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
     sans-serif;
@@ -91,11 +92,14 @@ form div:has(select:disabled) {
 
 button[type="submit"] {
   background-color: var(--secundaire-kleur);
+  border-radius: var(--border-radius);
+  font-family: var(--font-gill-sans);
+  color: var(--tekst-kleur);
+
+  font-size: 1rem;
   border: none;
   padding: 0.5rem 2rem;
   max-width: max-content;
-  color: white;
-  border-radius: 2rem;
-  font-family: var(--font-gill-sans);
+  cursor: pointer;
   font-weight: 500;
 }

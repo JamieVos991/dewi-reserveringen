@@ -26,7 +26,7 @@ exports.reserve = functions.https.onRequest(async (req, res) => {
   if (!email || !name || !studio || !date || !startTime || !endTime) {
     return res.status(400).send({ success: false, message: "Missing required fields" });
   }
-
+  
   try {
     // Opslaan in Firestore
     await db.collection("reservations").add({

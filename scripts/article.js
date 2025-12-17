@@ -33,9 +33,9 @@ function updateAsideState() {
     eindTijdSelect.value !== "";
 
   // Toggle de active class op de cirkels
-  asideArticles[0].classList.toggle('active', step1Valid);
-  asideArticles[1].classList.toggle('active', step2Valid);
-  asideArticles[2].classList.toggle('active', step3Valid);
+  asideArticles[0].classList.toggle('actief', step1Valid);
+  asideArticles[1].classList.toggle('actief', step2Valid);
+  asideArticles[2].classList.toggle('actief', step3Valid);
 }
 
 // Eventlisteners om de cirkels bij te werken bij input of select wijziging

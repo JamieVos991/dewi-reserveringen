@@ -9,23 +9,28 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
+
   const MIN_HOUR = 8;
   const MIN_MINUTE = 30;
   const MAX_HOUR = 21;
-  const MAX_MINUTE = 30; 
+  const MAX_MINUTE = 30;
   const STEP_MINUTES = 30;
 
   let studio = "";
   let date = "";
   let startTime = "";
   let endTime = "";
+  let name = "";
+  let email = "";
   let bookedRanges = [];
 
+  const form = document.getElementById("reservationForm");
   const studioSelect = document.getElementById("studio");
   const dateInput = document.getElementById("date");
   const startSelect = document.getElementById("startTime");
   const endSelect = document.getElementById("endTime");
-  const form = document.getElementById("reservationForm");
+  const nameInput = form.querySelector('input[name="name"]');
+  const emailInput = form.querySelector('input[name="email"]');
 
   const today = new Date();
   const todayStr = today.toISOString().split("T")[0];
@@ -33,22 +38,23 @@ document.addEventListener("DOMContentLoaded", () => {
   dateInput.value = todayStr;
   date = todayStr;
 
+  nameInput.addEventListener("input", e => name = e.target.value);
+  emailInput.addEventListener("input", e => email = e.target.value);
+  studioSelect.addEventListener("change", e => { studio = e.target.value; refreshTimes(); });
+  dateInput.addEventListener("change", e => { date = e.target.value; refreshTimes(); });
+  startSelect.addEventListener("change", e => { startTime = e.target.value; populateEndTimes(); endTime = ""; });
+  endSelect.addEventListener("change", e => { endTime = e.target.value; });
+
   function generateTimes() {
     const times = [];
-
     for (let h = MIN_HOUR; h <= MAX_HOUR; h++) {
       for (let m = 0; m < 60; m += STEP_MINUTES) {
         if (h === MIN_HOUR && m < MIN_MINUTE) continue;
         if (h === MAX_HOUR && m > MAX_MINUTE) continue;
-
-        times.push({
-          hour: h,
-          minute: m,
-          str: `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`
-        });
+        const str = `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}`;
+        times.push({ hour: h, minute: m, str });
       }
     }
-
     return times;
   }
 
@@ -58,54 +64,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function fetchBookedTimes() {
     if (!studio || !date) return;
-
     bookedRanges = [];
-
     const q = query(
       collection(db, "reservations"),
       where("studio", "==", studio),
       where("date", "==", date)
     );
-
     const snapshot = await getDocs(q);
-
     snapshot.forEach(doc => {
       const data = doc.data();
-      bookedRanges.push({
-        startTime: data.startTime,
-        endTime: data.endTime
-      });
+      bookedRanges.push({ startTime: data.startTime, endTime: data.endTime });
     });
   }
 
   function populateStartTimes() {
     const allTimes = generateTimes();
     startSelect.innerHTML = `<option value="">Selecteer een start tijd</option>`;
-  
     const now = new Date();
     const selectedDate = new Date(date + "T00:00");
-  
+
     allTimes.forEach((t, index) => {
-      if (index === allTimes.length - 1) return;
-  
+      if (index === allTimes.length-1) return;
       let disabled = false;
       let text = t.str;
-  
-      if (
-        now.toDateString() === selectedDate.toDateString() &&
-        (t.hour < now.getHours() ||
-          (t.hour === now.getHours() && t.minute <= now.getMinutes()))
-      ) {
+
+      if (now.toDateString() === selectedDate.toDateString() &&
+          (t.hour < now.getHours() || (t.hour === now.getHours() && t.minute <= now.getMinutes()))) {
         disabled = true;
       }
-  
+
       bookedRanges.forEach(range => {
         if (t.str >= range.startTime && t.str < range.endTime) {
           disabled = true;
           text += " – Geboekt";
         }
       });
-  
+
       const option = document.createElement("option");
       option.value = t.str;
       option.textContent = text;
@@ -113,24 +107,20 @@ document.addEventListener("DOMContentLoaded", () => {
       startSelect.appendChild(option);
     });
   }
-  
+
   function populateEndTimes() {
     if (!startTime) return;
-
     const allTimes = generateTimes();
     const startIndex = allTimes.findIndex(t => t.str === startTime) + 1;
-
     endSelect.innerHTML = `<option value="">Selecteer een eind tijd</option>`;
 
     const nextBooking = bookedRanges
-      .filter(range => range.startTime > startTime)
-      .sort((a, b) => a.startTime.localeCompare(b.startTime))[0];
-
+      .filter(r => r.startTime > startTime)
+      .sort((a,b) => a.startTime.localeCompare(b.startTime))[0];
     const maxEndTime = nextBooking ? nextBooking.startTime : null;
 
     allTimes.slice(startIndex).forEach(t => {
       if (maxEndTime && t.str > maxEndTime) return;
-
       const option = document.createElement("option");
       option.value = t.str;
       option.textContent = t.str;
@@ -146,42 +136,19 @@ document.addEventListener("DOMContentLoaded", () => {
     endSelect.innerHTML = "";
   }
 
-
-  studioSelect.addEventListener("change", () => {
-    studio = studioSelect.value;
-    refreshTimes();
-  });
-
-  dateInput.addEventListener("change", () => {
-    date = dateInput.value;
-    refreshTimes();
-  });
-
-  startSelect.addEventListener("change", e => {
-    startTime = e.target.value;
-    populateEndTimes();
-    endTime = "";
-  });
-
-  endSelect.addEventListener("change", e => {
-    endTime = e.target.value;
-  });
-
-
   form.addEventListener("submit", async e => {
     e.preventDefault();
 
-    if (!studio || !date || !startTime || !endTime) {
+    if (!studio || !date || !startTime || !endTime || !name.trim() || !email.trim()) {
       alert("Please fill out all fields.");
       return;
     }
 
     await fetchBookedTimes();
 
-    const conflict = bookedRanges.some(range =>
-      rangesOverlap(startTime, endTime, range.startTime, range.endTime)
+    const conflict = bookedRanges.some(r =>
+      rangesOverlap(startTime, endTime, r.startTime, r.endTime)
     );
-
     if (conflict) {
       alert("This time overlaps with an existing reservation.");
       return;
@@ -189,8 +156,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       await addDoc(collection(db, "reservations"), {
-        email: form.email.value,
-        name: form.name.value,
+        name: name.trim(),
+        email: email.trim(),
         studio,
         date,
         startTime,
@@ -198,10 +165,18 @@ document.addEventListener("DOMContentLoaded", () => {
         createdAt: serverTimestamp()
       });
 
-      alert("Reservation successful!");
-      await refreshTimes();
+      alert("Reservatie is gelukt!");
+
       form.reset();
-    } catch (err) {
+      name = "";
+      email = "";
+      studio = "";
+      date = todayStr;
+      startTime = "";
+      endTime = "";
+      refreshTimes();
+
+    } catch(err) {
       console.error(err);
       alert("Failed to save reservation.");
     }
