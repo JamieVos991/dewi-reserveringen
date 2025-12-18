@@ -2,9 +2,9 @@
 const naamInput = document.querySelector('input[name="name"]');
 const emailInput = document.querySelector('input[name="email"]');
 const studioSelect = document.getElementById('studio');
-const datumInput = document.getElementById('date');
-const startTijdSelect = document.getElementById('startTime');
-const eindTijdSelect = document.getElementById('endTime');
+const datumInput = document.getElementById('datum');
+const startTijdSelect = document.getElementById('startTijd');
+const eindTijdSelect = document.getElementById('eindTijd');
 const asideArticles = document.querySelectorAll('aside article');
 const form = document.getElementById('reservationForm');
 

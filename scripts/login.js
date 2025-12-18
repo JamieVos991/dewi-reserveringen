@@ -3,7 +3,7 @@ import { auth } from "../firebase/firebase.js";
 import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-auth.js";
 
 
-// Wacht tot de pagina geladen is
+// Wacht tot de pag ina geladen is
 document.addEventListener("DOMContentLoaded", () => {
   const loginForm = document.getElementById("loginForm");
   const errorMsg = document.getElementById("errorMsg");

@@ -44,7 +44,7 @@ async function loadReservations() {
   // Query maken: haal alle reserveringen op, gesorteerd op datum
   const q = query(
     collection(db, "reservations"),
-    orderBy("date", "asc")
+    orderBy("datum", "asc")
   );
 
   // Query uitvoeren
@@ -81,11 +81,11 @@ async function loadReservations() {
               </section>
               <section>
                 <p>
-                  ${r.startTime}
+                  ${r.startTijd}
                   -
-                  ${r.endTime}
+                  ${r.eindTijd}
                 </p>
-                <p>${r.date}</p>
+                <p>${r.datum}</p>
               </section>
             </section>
         </article>
