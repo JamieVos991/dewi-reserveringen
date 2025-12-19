@@ -10,7 +10,6 @@ const db = admin.firestore();
 const gmailUser = defineSecret("GMAIL_USER");
 const gmailPass = defineSecret("GMAIL_PASS");
 
-// Reserve functie
 exports.reserve = onRequest(
   {
     secrets: [gmailUser, gmailPass] 
@@ -49,7 +48,7 @@ exports.reserve = onRequest(
           datum,
           startTijd,
           eindTijd,
-          createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          gemaaktOp: admin.firestore.FieldValue.serverTimestamp(),
         });
 
         await transporter.sendMail({
@@ -71,7 +70,7 @@ exports.reserve = onRequest(
 
         return res.status(200).send({ success: true });
       } catch (err) {
-        console.error("Error in reserve function:", err);
+        console.error("Error in de functie:", err);
         return res.status(500).send({ success: false, message: "Server error" });
       }
     });

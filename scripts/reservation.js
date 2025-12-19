@@ -9,6 +9,7 @@ import {
 // Wacht tot de volledige HTML is geladen voordat we JS uitvoeren
 document.addEventListener("DOMContentLoaded", () => {
 
+  /* ================== CONFIGURATIE TIJDEN ================== */
   // Openingstijden en interval (30 minuten)
   const MIN_UUR = 8;
   const MIN_MINUUT = 30;
@@ -16,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const MAX_MINUUT = 30;
   const STEP_MINUUT = 30;
 
+  /* ================== STATE (APP DATA) ================== */
   // Deze variabelen houden de huidige formulierstatus bij
   let studio = "";
   let datum = "";
@@ -27,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Alle reeds geboekte tijdsblokken voor de gekozen studio + datum
   let bookedRanges = [];
 
+  /* ================== DOM ELEMENTEN ================= */
   const form = document.getElementById("reservationForm");
   const studioSelect = document.getElementById("studio");
   const datumInput = document.getElementById("datum");
