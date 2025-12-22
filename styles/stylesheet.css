@@ -100,7 +100,7 @@ form div:has(select:disabled) {
   opacity: 0.7;
 }
 
-button[type="submit"] {
+button {
   background-color: var(--secundaire-kleur);
   border-radius: var(--border-radius);
   font-family: var(--font-gill-sans);

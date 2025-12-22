@@ -1,8 +1,7 @@
 main {
   background-color: white;
   padding: 2rem;
-  max-width: 20rem;
-  min-width: 50%;
+  width: 40rem;
 
   #reservationsContainer {
     display: grid;
@@ -16,9 +15,10 @@ main {
   }
 
   article {
-    background-color: whitesmoke;
-    padding: 0.8rem;
+    padding: 1rem;
     height: 9rem;
+    border: 1px solid grey;
+    border-radius: var(--border-radius);
 
     section {
       display: flex;
@@ -28,6 +28,10 @@ main {
         height: 60%;
         font-size: 1.2rem;
 
+        p {
+          font-weight: 500;
+        }
+
         button {
           height: fit-content;
         }
@@ -36,6 +40,10 @@ main {
       &:nth-of-type(2) {
         height: 20%;
         font-size: 1rem;
+
+        p {
+          color: rgb(0, 0, 0, 0.5);
+        }
       }
 
       &:nth-of-type(3) {
