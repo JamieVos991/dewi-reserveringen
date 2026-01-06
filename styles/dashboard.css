@@ -12,6 +12,11 @@ main {
     display: flex;
     justify-content: space-between;
     padding-bottom: 1rem;
+
+    @media (max-width: 600px) {
+      display: grid;
+      gap: 1rem;
+    }
   }
 
   article {

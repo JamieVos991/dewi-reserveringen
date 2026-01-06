@@ -13,6 +13,9 @@
     <link rel="stylesheet" href="./styles/form.css" />
   </head>
   <body>
+    <div id="globalLoader" class="loader-overlay hidden">
+      <div class="loader-spinner"></div>
+    </div>
     <section>
       <header>
         <h2>Boek hier je studio!</h2>
@@ -85,7 +88,10 @@
             <select id="eindTijd" required></select>
           </label>
         </fieldset>
-        <button type="submit">Reserveer</button>
+        <button type="submit" id="reserveerBtn">
+          <span class="btn-text">Reserveer</span>
+          <span class="spinner hidden"></span>
+        </button>
       </form>
     </section>
     <script type="module" src="./scripts/reservation.js"></script>

@@ -200,9 +200,7 @@ studioFilter.addEventListener("change", () => {
   render();
 });
 
-/* =========================
-   DELETE (EVENT DELEGATION)
-========================= */
+
 container.addEventListener("click", async e => {
   const btn = e.target.closest(".deleteBtn");
   if (!btn) return;
