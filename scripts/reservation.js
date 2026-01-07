@@ -109,36 +109,65 @@ document.addEventListener("DOMContentLoaded", () => {
   function populateStartTimes() {
     const allTimes = generateTimes();
     startSelect.innerHTML = `<option value="">Selecteer start tijd</option>`;
-
+  
+    const now = new Date();
+    const isToday =
+      datum === new Date().toISOString().split("T")[0];
+  
     allTimes.forEach((t, i) => {
       if (i === allTimes.length - 1) return;
+  
+      let disabled = false;
+      let label = t.str;
+  
+      // 🔒 Block past times if date === today
+      if (isToday) {
+        const timeDate = new Date(`${datum}T${t.str}`);
+        if (timeDate <= now) {
+          disabled = true;
+        }
+      }
 
-      let disabled = bookedRanges.some(r =>
-        t.str >= r.startTijd && t.str < r.eindTijd
-      );
-
+      bookedRanges.forEach(r => {
+        if (t.str >= r.startTijd && t.str < r.eindTijd) {
+          disabled = true;
+          label += " – Geboekt";
+        }
+      });
+  
       const option = document.createElement("option");
       option.value = t.str;
-      option.textContent = disabled ? `${t.str} – Geboekt` : t.str;
+      option.textContent = label;
       option.disabled = disabled;
       startSelect.appendChild(option);
     });
   }
+  
 
   function populateEndTimes() {
     if (!startTijd) return;
-
+  
     const allTimes = generateTimes();
     const startIndex = allTimes.findIndex(t => t.str === startTijd) + 1;
     eindSelect.innerHTML = `<option value="">Selecteer eind tijd</option>`;
-
+  
+    // find the first booking that starts AFTER the chosen start time
+    const nextBooking = bookedRanges
+      .filter(r => r.startTijd > startTijd)
+      .sort((a, b) => a.startTijd.localeCompare(b.startTijd))[0];
+  
+    const maxEndTime = nextBooking ? nextBooking.startTijd : null;
+  
     allTimes.slice(startIndex).forEach(t => {
+      if (maxEndTime && t.str > maxEndTime) return;
+  
       const option = document.createElement("option");
       option.value = t.str;
       option.textContent = t.str;
       eindSelect.appendChild(option);
     });
-  }
+  }fp
+  
 
   async function refreshTimes() {
     await fetchBookedTimes();
