@@ -65,6 +65,7 @@ exports.reserve = onRequest(
               <li><strong>Tijd:</strong> ${startTijd} – ${eindTijd}</li>
             </ul>
             <p>Tot snel!</p>
+            <img  src="https://jamievos991.github.io/dewi-reserveringen/assets/artquake-img.png" alt="Artquake" style="max-width: 50%; height: auto;">
           `
         });
 
