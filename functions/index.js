@@ -65,9 +65,17 @@ exports.reserve = onRequest(
               <li><strong>Tijd:</strong> ${startTijd} – ${eindTijd}</li>
             </ul>
             <p>Tot snel!</p>
-            <img  src="https://jamievos991.github.io/dewi-reserveringen/assets/artquake-img.png" alt="Artquake" style="max-width: 50%; height: auto;">
-          `
+            <img src="cid:artquake-img" alt="Artquake" style="max-width: 50%; height: auto;">
+          `,
+          attachments: [
+            {
+              filename: "artquake-img.png",
+              path: "../assets/artquake-img.png", // of volledige server path
+              cid: "artquake-img"
+            }
+          ]
         });
+        
 
         return res.status(200).send({ success: true });
       } catch (err) {
