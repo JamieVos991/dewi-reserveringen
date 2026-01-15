@@ -79,7 +79,6 @@ exports.reserve = onRequest(
 
         return res.status(200).send({ success: true });
       } catch (err) {
-        console.error("Error in de functie:", err);
         return res.status(500).send({ success: false, message: "Server error" });
       }
     });
