@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const MIN_UUR = 8;
   const MIN_MINUUT = 30;
   const MAX_UUR = 21;
-  const MAX_MINUUT = 30;
+  const MAX_MINUUT = 30; // Absolute sluitingstijd
   const STEP_MINUUT = 30;
   const MIN_FORM_TIME = 3; 
 
@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const datumInput = document.getElementById("datum");
   const startSelect = document.getElementById("startTijd");
   const eindSelect = document.getElementById("eindTijd");
+  const durationFeedback = document.getElementById("durationFeedback");
   const naamInput = form.querySelector('input[name="name"]');
   const emailInput = form.querySelector('input[name="email"]');
   const honeypotInput = form.querySelector('input[name="company"]');
@@ -66,13 +67,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
   startSelect.addEventListener("change", e => {
     startTijd = e.target.value;
+    eindTijd = ""; 
     populateEndTimes();
+    updateDurationText();
   });
 
   eindSelect.addEventListener("change", e => {
     eindTijd = e.target.value;
+    updateDurationText();
   });
 
+  function calculateDuration(start, end) {
+    const [h1, m1] = start.split(':').map(Number);
+    const [h2, m2] = end.split(':').map(Number);
+    return (h2 * 60 + m2) - (h1 * 60 + m1);
+  }
+
+  function updateDurationText() {
+    if (startTijd && eindTijd) {
+      const diff = calculateDuration(startTijd, eindTijd);
+      const hours = Math.floor(diff / 60);
+      const mins = diff % 60;
+      
+      let text = "Je reserveert de studio voor ";
+      if (hours > 0) text += `${hours} ${hours === 1 ? 'uur' : 'uur'} `;
+      if (mins > 0) text += `${hours > 0 ? 'en ' : ''}${mins} minuten`;
+      
+      durationFeedback.textContent = text + ".";
+    } else {
+      durationFeedback.textContent = "";
+    }
+  }
+
+  // Genereert alle mogelijke tijdstippen van 08:30 tot 21:30
   function generateTimes() {
     const times = [];
     for (let h = MIN_UUR; h <= MAX_UUR; h++) {
@@ -107,23 +134,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function populateStartTimes() {
     const allTimes = generateTimes();
+    // Voor de STARTTIJD halen we de allerlaatste optie (21:30) weg, 
+    // want je kunt niet om 21:30 beginnen als je om 21:30 weg moet.
+    const startOptions = allTimes.filter(t => t.str < "21:30");
+    
     startSelect.innerHTML = `<option value="">Selecteer start tijd</option>`;
 
     const now = new Date();
     const isToday = datum === todayStr;
 
-    allTimes.forEach((t, i) => {
-      if (i === allTimes.length - 1) return;
-
+    startOptions.forEach((t) => {
       let disabled = false;
       let label = t.str;
 
       if (isToday) {
-        const timeDate = new Date(`${datum}T${t.str}`);
+        const [h, m] = t.str.split(':').map(Number);
+        const timeDate = new Date();
+        timeDate.setHours(h, m, 0, 0);
         if (timeDate <= now) disabled = true;
       }
 
       bookedRanges.forEach(r => {
+        // Blokkeer als de tijd in een bestaande boeking valt
         if (t.str >= r.startTijd && t.str < r.eindTijd) {
           disabled = true;
           label += " – Geboekt";
@@ -139,24 +171,35 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function populateEndTimes() {
-    if (!startTijd) return;
+    if (!startTijd) {
+        eindSelect.innerHTML = `<option value="">Selecteer eind tijd</option>`;
+        return;
+    }
 
     const allTimes = generateTimes();
+    // De eindtijd moet altijd later zijn dan de starttijd
     const startIndex = allTimes.findIndex(t => t.str === startTijd) + 1;
     eindSelect.innerHTML = `<option value="">Selecteer eind tijd</option>`;
 
+    // Zoek de eerstvolgende boeking na de gekozen starttijd
     const nextBooking = bookedRanges
       .filter(r => r.startTijd > startTijd)
       .sort((a, b) => a.startTijd.localeCompare(b.startTijd))[0];
 
-    const maxEndTime = nextBooking ? nextBooking.startTijd : null;
+    const maxEndTime = nextBooking ? nextBooking.startTijd : "21:30";
 
     allTimes.slice(startIndex).forEach(t => {
-      if (maxEndTime && t.str > maxEndTime) return;
+      // De eindtijd mag niet verder gaan dan de volgende boeking OF de sluitingstijd
+      if (t.str > maxEndTime) return;
+
+      const diff = calculateDuration(startTijd, t.str);
+      const hours = Math.floor(diff / 60);
+      const mins = diff % 60;
+      const durationLabel = hours > 0 ? `${hours}u ${mins}m` : `${mins} min`;
 
       const option = document.createElement("option");
       option.value = t.str;
-      option.textContent = t.str;
+      option.textContent = `${t.str} (${durationLabel})`;
       eindSelect.appendChild(option);
     });
   }
@@ -167,20 +210,15 @@ document.addEventListener("DOMContentLoaded", () => {
     startTijd = "";
     eindTijd = "";
     eindSelect.innerHTML = "";
+    updateDurationText();
   }
 
   form.addEventListener("submit", async e => {
     e.preventDefault();
 
-    if (honeypotInput && honeypotInput.value.trim() !== "") {
-      console.warn("Spam (honeypot)");
-      return;
-    }
+    if (honeypotInput && honeypotInput.value.trim() !== "") return;
     const timeSpent = (Date.now() - formLoadedAt) / 1000;
-    if (timeSpent < MIN_FORM_TIME) {
-      console.warn("Spam (te snel)");
-      return;
-    }
+    if (timeSpent < MIN_FORM_TIME) return;
 
     if (!studio || !datum || !startTijd || !eindTijd || !name || !email) {
       stopLoadingAndAlert("Beantwoord alle inputs alstublieft.");
@@ -191,7 +229,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       await fetchBookedTimes();
-
       const conflict = bookedRanges.some(r =>
         rangesOverlap(startTijd, eindTijd, r.startTijd, r.eindTijd)
       );
@@ -207,20 +244,13 @@ document.addEventListener("DOMContentLoaded", () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            name,
-            email,
-            studio,
-            datum,
-            startTijd,
-            eindTijd,
-            timeSpent,
+            name, email, studio, datum, startTijd, eindTijd, timeSpent,
             honeypot: honeypotInput?.value || ""
           })
         }
       );
 
       const data = await response.json();
-
       if (!data.success) {
         stopLoadingAndAlert("Reservatie mislukt.");
         return;
@@ -229,7 +259,6 @@ document.addEventListener("DOMContentLoaded", () => {
       alert("Reservatie gelukt! Er is een bevestigingsmail gestuurd.");
       form.reset();
       refreshTimes();
-
     } catch (err) {
       console.error(err);
       stopLoadingAndAlert("Server fout. Probeer opnieuw.");

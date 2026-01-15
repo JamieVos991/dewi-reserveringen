@@ -51,31 +51,31 @@ exports.reserve = onRequest(
           gemaaktOp: admin.firestore.FieldValue.serverTimestamp(),
         });
 
-        await transporter.sendMail({
-          from: `"Studio Reserveringen" <${process.env.GMAIL_USER}>`,
-          to: email,
-          subject: "Reservatie bevestigd ✅",
-          html: `
-            <h2>Reservatie bevestigd</h2>
-            <p>Hi ${name},</p>
-            <p>Wij hebben jouw reservatie binnen gekregen:</p>
-            <ul>
-              <li><strong>Studio:</strong> ${studio}</li>
-              <li><strong>Datum:</strong> ${datum}</li>
-              <li><strong>Tijd:</strong> ${startTijd} – ${eindTijd}</li>
-            </ul>
-            <p>Tot snel!</p>
-            <img src="cid:artquake-img" alt="Artquake" style="max-width: 50%; height: auto;">
-          `,
-          attachments: [
-            {
-              filename: "artquake-img.png",
-              path: "../assets/artquake-img.png", // of volledige server path
-              cid: "artquake-img"
-            }
-          ]
-        });
-        
+       await transporter.sendMail({
+  from: `"Studio Reserveringen" <${process.env.GMAIL_USER}>`,
+  to: email,
+  subject: "Reservatie bevestigd ✅",
+  html: `
+    <h2>Reservatie bevestigd</h2>
+    <p>Hi ${name},</p>
+    <p>Wij hebben jouw reservatie binnen gekregen:</p>
+    <ul>
+      <li><strong>Studio:</strong> ${studio}</li>
+      <li><strong>Datum:</strong> ${datum}</li>
+      <li><strong>Tijd:</strong> ${startTijd} – ${eindTijd}</li>
+    </ul>
+    <p>Tot snel!</p>
+    <img src="cid:artquake-img" alt="Artquake" style="max-width: 50%; height: auto;">
+  `,
+  attachments: [
+    {
+      filename: "artquake-img.png",
+      path: "./artquake-img.png", // of volledige server path
+      cid: "artquake-img"
+    }
+  ]
+});
+
 
         return res.status(200).send({ success: true });
       } catch (err) {
