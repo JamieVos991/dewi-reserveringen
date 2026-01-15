@@ -1,5 +1,7 @@
 {
   "projects": {
     "default": "strakplan-e0953"
-  }
+  },
+  "targets": {},
+  "etags": {}
 }

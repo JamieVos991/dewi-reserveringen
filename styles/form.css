@@ -1,3 +1,8 @@
+body {
+  display: grid;
+  place-content: center;
+}
+
 section {
   background: var(--tekst-kleur);
   border-radius: var(--border-radius);

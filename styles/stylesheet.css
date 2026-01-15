@@ -31,9 +31,7 @@
 body {
   font-family: var(--font-gill-sans);
   background-color: var(--primaire-kleur);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
   min-height: 100dvh;
   padding: 1.5rem;
 }

@@ -1,5 +1,6 @@
 body {
   display: grid;
+  justify-content: center;
 
   #loguit-knop {
     position: absolute;
@@ -10,7 +11,7 @@ body {
   header {
     display: flex;
     padding: 1rem 2rem;
-    background: white;
+    background-color: rgb(230, 230, 230);
     align-items: center;
     justify-content: space-between;
 
@@ -23,10 +24,10 @@ body {
   main {
     background: white;
     width: 30rem;
+    max-height: fit-content;
 
     #reservaties-container {
       display: grid;
-      gap: 1rem;
     }
 
     details {
@@ -78,6 +79,10 @@ body {
           height: 20%;
           font-size: 1.05rem;
         }
+      }
+
+      &:nth-of-type(even) {
+        background-color: rgb(230, 230, 230);
       }
     }
 
