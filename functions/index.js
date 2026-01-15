@@ -77,13 +77,13 @@ exports.reserve = onRequest(
                 Reservering annuleren
               </a>
               <br><br>
-              <img src="cid:artquake-img" alt="Artquake" style="max-width: 200px; height: auto;">
+              <img src="cid:logo" alt="Artquake" style="max-width: 200px; height: auto;">
             </div>
           `,
           attachments: [{
-            filename: "artquake-img.png",
-            path: "./artquake-img.png", // Zorg dat dit bestand in je functions map staat!
-            cid: "artquake-img"
+            filename: "./Logo.png",
+            path: "./Logo.png", // Zorg dat dit bestand in je functions map staat!
+            cid: "logo"
           }]
         });
 
